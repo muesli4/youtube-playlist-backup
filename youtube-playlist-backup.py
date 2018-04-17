@@ -31,7 +31,7 @@ def request_playlists(channel_id, page_token = None, api_key = None):
     params = { 'maxResults' : '50'
              , 'channelId' : channel_id
              , 'part' : 'snippet'
-             , 'fields' : 'items(id,snippet/title)'
+             , 'fields' : 'items(id,snippet/title),nextPageToken'
              }
     return request_template(params, page_token, api_key, 'playlists')
 
@@ -40,7 +40,7 @@ def request_playlist_items(playlist_id, page_token = None, api_key = None):
     params = { 'maxResults' : '50'
              , 'playlistId' : playlist_id
              , 'part' : 'snippet'
-             , 'fields' : 'items/snippet(title,resourceId/videoId)'
+             , 'fields' : 'items/snippet(title,resourceId/videoId),nextPageToken'
              }
     return request_template(params, page_token, api_key, 'playlistItems')
 
