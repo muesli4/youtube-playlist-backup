@@ -54,16 +54,14 @@ def parse_json_playlist_items(json):
 # Make json requests for all available pages and merge the results such that
 # everything is fetched.
 def get_template(request, parse):
-    result = []
     next_page = None
     while True:
         json = request(next_page).json()
-        result += parse(json)
+        yield parse(json)
         if 'nextPageToken' in json:
             next_page = json['nextPageToken']
         else:
             break
-    return result
 
 def get_playlists(channel_id, api_key):
     return get_template(lambda np: request_playlists(channel_id, np, api_key), parse_json_playlists)
@@ -72,10 +70,8 @@ def get_playlist_items(playlist_id, api_key):
     return get_template(lambda np: request_playlist_items(playlist_id, np, api_key), parse_json_playlist_items)
 
 def get_all(channel_id, api_key):
-    result = []
     for (playlist_title, playlist_id) in get_playlists(channel_id, api_key):
-        result.append((playlist_title, get_playlist_items(playlist_id, api_key)))
-    return result
+        yield (playlist_title, get_playlist_items(playlist_id, api_key))
 
 def print_all(channel_id, api_key):
     for (playlist_title, playlist_items) in get_all(channel_id, api_key):
